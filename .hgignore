@@ -3,4 +3,5 @@ parts/
 vct.core.egg-info/
 .installed.cfg
 .*pyc$
+.*\.swp$
 develop-eggs/

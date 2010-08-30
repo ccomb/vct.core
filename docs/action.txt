@@ -1,0 +1,7 @@
+Action
+======
+
+We can create an action::
+
+>>> 1+1
+2

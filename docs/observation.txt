@@ -1,0 +1,22 @@
+Observation
+===========
+
+We can create an observation:
+
+>>> from vct.core.observation import Observation
+>>> observation = Observation()
+>>> observation.title = 'something'
+>>> observation.title
+'something'
+
+We can store an observation
+
+either like this:
+
+>>> getUtility(IDatabase).save(observation)
+
+or like this:
+
+>>> IDatabase(observation).save()
+
+which would allow to have a different database for observation or other objects
