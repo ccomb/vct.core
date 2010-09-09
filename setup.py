@@ -23,6 +23,8 @@ setup(name='vct.core',
       zip_safe=False,
       install_requires=[
           'setuptools',
+          'zope.component',
+          'zope.interface',
           # -*- Extra requirements: -*-
       ],
       entry_points="""

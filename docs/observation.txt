@@ -13,10 +13,8 @@ We can store an observation
 
 either like this:
 
->>> getUtility(IDatabase).save(observation)
-
-or like this:
-
+>>> from vct.core.interfaces import IDatabase
 >>> IDatabase(observation).save()
+save the observation somewhere
 
 which would allow to have a different database for observation or other objects
