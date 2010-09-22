@@ -21,6 +21,10 @@ setup(name='vct.core',
       namespace_packages=['vct'],
       include_package_data=True,
       zip_safe=False,
+      tests_require=['ZODB3', 'transaction'],
+      extras_require={
+        'zodb': ['ZODB3', 'transaction']
+      },
       install_requires=[
           'setuptools',
           'zope.component',

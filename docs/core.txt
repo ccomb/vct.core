@@ -1,0 +1,219 @@
+Core
+====
+
+explain how the core works and the different notions
+
+Items
+~~~~~
+
+Medical Item
+------------
+
+A Medical Item is the most basic piece of information *managed* by the core and
+related to a patient.
+It can be specialized in the different types of objects:
+
+- Observation
+- Issue
+- Action
+
+>>> from vct.core import Item, Observation, Issue, Action
+>>> item = Item()
+>>> action, issue, observation = Action(), Issue(), Observation()
+
+All objects are items:
+
+>>> isinstance(action, Item)
+True
+>>> isinstance(issue, Item)
+True
+>>> isinstance(observation, Item)
+True
+
+
+
+Agent
+-----
+
+An agent is a person or an entity responsible of handling medical items.
+
+>>> from vct.core import Agent, Patient, CareProvider
+>>> agent, patient = Agent(), Patient()
+ >>> careprovider = CareProvider()
+
+A patient is an agent subject of medical care. A CareProvider is an Agent as
+well.
+
+>>> isinstance(patient, Agent)
+True
+>>> isinstance(careprovider, Agent)
+True
+
+Relation
+--------
+
+A relation is used to represent a link between two notions (agent or
+medicalitems). It can then be stored independently (RDF store?)
+
+>>> from vct.core.relation import Relation, Predicate
+
+We can create a relation between two Medical Items, using a verb coming from an
+ontology.
+
+>>> item1 = Item()
+>>> item2 = Item()
+>>> predicate = Predicate()
+>>> relation = Relation(item1, predicate, item2)
+>>> relation.subj is item1
+True
+>>> relation.obj is item2
+True
+>>> relation.predicate is predicate
+True
+
+Storage and querying
+~~~~~~~~~~~~~~~~~~~~
+Create, Read, Updade, Delete, Search
+
+An item contains a data attribute holding data.
+
+>>> from vct.core.interfaces import IDatabase
+>>> item = Item()
+>>> item.data = {'key': 'value1'}
+
+We can save the object using a uid:
+
+>>> IDatabase(item).put()
+Traceback (most recent call last):
+...
+ValueError: No uids
+>>> IDatabase(item).put('frsecu', 1234)
+>>> del item
+
+We can retrieve the object given a uid:
+
+>>> from zope.component import getUtility
+>>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> number
+1
+>>> item = results.next()
+>>> item.uids
+{'frsecu': 1234}
+>>> item.data
+{'key': 'value1'}
+
+We can retrieve the object using any key:
+
+>>> number, results = getUtility(IDatabase).get(data={'key': 'value1'})
+>>> number
+1
+>>> item = results.next()
+>>> item.data
+{'key': 'value1'}
+>>> item.uids
+{'frsecu': 1234}
+>>> results.next()
+Traceback (most recent call last):
+...
+StopIteration
+
+We can update the object data:
+
+>>> item.data['key'] = 'value2'
+>>> item.data['key2'] = 10
+>>> IDatabase(item).put()
+>>> del item
+>>> number, results = getUtility(IDatabase).get(data={'key': 'value1'})
+>>> number
+0
+>>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number
+1
+>>> item = results.next()
+>>> item.data['key']
+'value2'
+>>> item.data['key2']
+10
+>>> item.uids
+{'frsecu': 1234}
+
+We can also add a uid by putting again:
+
+>>> IDatabase(item).put('labo1', 5678)
+>>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> item = results.next()
+>>> item.uids['frsecu']
+1234
+>>> item.uids['labo1']
+5678
+>>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> item = results.next()
+>>> item.uids['frsecu']
+1234
+>>> item.uids['labo1']
+5678
+
+We can delete the item using any uid:
+
+>>> getUtility(IDatabase).delete('frsecu', 1234)
+
+The item still exists, but only contains the labo1 uid:
+
+>>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> number
+0
+>>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> results.next().data['key2']
+10
+>>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number
+1
+
+We delete using the 2nd uid, then we cannot retrieve the object again:
+
+>>> getUtility(IDatabase).delete('labo1', 5678)
+>>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> number
+0
+>>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number
+0
+
+
+Capabilities
+~~~~~~~~~~~~
+
+Group
+-----
+
+>>> from vct.core.interfaces import IGroup
+
+
+Trust level
+-----------
+
+Versionning
+-----------
+
+
+Advanced objects
+~~~~~~~~~~~~~~~~
+
+Advanced objects are objects providing several capabilities.
+
+AgentGroup
+----------
+
+An AgentGroup is a Agent providing Group capabilities. It can be used for an
+hospital. 
+
+>>> from vct.core.agent import AgentGroup
+>>> from zope.interface import providedBy
+>>> hospital = AgentGroup()
+>>> IGroup.providedBy(hospital)
+True
+
+
+
+
+
