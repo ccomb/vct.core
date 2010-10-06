@@ -17,7 +17,7 @@ either like this:
 >>> from zope.component import getUtility
 >>> IDatabase(observation).put('frsecu', '1234')
 >>> number, results = getUtility(IDatabase).get(uid=('frsecu', '1234'))
->>> results.next().uids
+>>> results[0].uids
 {'frsecu': '1234'}
 
 

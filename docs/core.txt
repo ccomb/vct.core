@@ -96,7 +96,7 @@ We can retrieve the object given a uid:
 >>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
 >>> number
 1
->>> item = results.next()
+>>> item = results[0]
 >>> item.uids
 {'frsecu': 1234}
 >>> item.data
@@ -107,15 +107,11 @@ We can retrieve the object using any key:
 >>> number, results = getUtility(IDatabase).get(data={'key': 'value1'})
 >>> number
 1
->>> item = results.next()
+>>> item = results[0]
 >>> item.data
 {'key': 'value1'}
 >>> item.uids
 {'frsecu': 1234}
->>> results.next()
-Traceback (most recent call last):
-...
-StopIteration
 
 We can update the object data:
 
@@ -129,7 +125,7 @@ We can update the object data:
 >>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
 >>> number
 1
->>> item = results.next()
+>>> item = results[0]
 >>> item.data['key']
 'value2'
 >>> item.data['key2']
@@ -141,13 +137,13 @@ We can also add a uid by putting again:
 
 >>> IDatabase(item).put('labo1', 5678)
 >>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
->>> item = results.next()
+>>> item = results[0]
 >>> item.uids['frsecu']
 1234
 >>> item.uids['labo1']
 5678
 >>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
->>> item = results.next()
+>>> item = results[0]
 >>> item.uids['frsecu']
 1234
 >>> item.uids['labo1']
@@ -163,7 +159,7 @@ The item still exists, but only contains the labo1 uid:
 >>> number
 0
 >>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
->>> results.next().data['key2']
+>>> results[0].data['key2']
 10
 >>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
 >>> number

@@ -32,13 +32,13 @@ class ZODBStorage(object):
         if uid is not None:
             container = self.root.get(uid[0])
             if container is None or uid[1] not in container:
-                return (0, iter([]))
+                return (0, [])
             zodb_item = container[uid[1]]
             # we recreate a non persistent object
             item = Item()
             item.data = dict(zodb_item.data)
             item.uids = dict(zodb_item.uids)
-            return (1, iter([item]))
+            return (1, [item])
 
         if data is not None:
             # TODO awfully slow, replace with a catalog search!
@@ -50,8 +50,8 @@ class ZODBStorage(object):
                         item.data = dict(zodb_item.data)
                         item.uids = dict(zodb_item.uids)
                         results.add(item)
-            return len(results), iter(results)
-        return (0, iter([]))
+            return len(results), list(results)
+        return (0, [])
 
 
     def delete(self, uid_name, uid_value):
@@ -69,6 +69,7 @@ zodb_storage = ZODBStorage()
 class ItemZODBStorage(ZODBStorage):
     """Generic ZODB storage adapter for putting or deleting items
     """
+    implements(IDatabase)
     adapts(IItem)
     def __init__(self, context):
         super(ItemZODBStorage, self).__init__()

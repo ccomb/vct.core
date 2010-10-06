@@ -1,0 +1,51 @@
+XMLRPC access
+=============
+vct.core can be accessed from an xmlrpc interface.
+
+First we connect to the xmlrpc service
+
+>>> import xmlrpclib
+>>> s = xmlrpclib.ServerProxy('http://localhost:8000')
+
+# Print list of available methods
+>>> print s.system.listMethods()
+['delete', 'get_by_data', 'get_by_uid', 'put',
+'system.listMethods', 'system.methodHelp', 'system.methodSignature']
+
+We can use the "get" method of the database:
+
+>>> print s.get_by_data({})
+[0, []]
+
+We try to save an item
+
+>>> data = {'type':'patient', 'name':'john'}
+>>> s.put('frsecu', 1234, data)
+0
+
+We try to retrieve the object given the uid:
+
+>>> from pprint import pprint
+>>> pprint(s.get_by_uid('frsecu', 1234), width=1)
+[1,
+ [{'data': {'name': 'john',
+            'type': 'patient'},
+   'uids': {'frsecu': 1234}}]]
+
+We can also do a search by any data key:
+
+>>> pprint(s.get_by_data({'name':'john'}), width=1)
+[1,
+ [{'data': {'name': 'john',
+            'type': 'patient'},
+   'uids': {'frsecu': 1234}}]]
+
+
+We can delete the item:
+
+>>> s.delete('frsecu', 1234)
+0
+>>> s.get_by_uid('frsecu', 1234)
+[0, []]
+
+

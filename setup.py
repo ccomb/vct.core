@@ -15,7 +15,7 @@ setup(name='vct.core',
       keywords='',
       author='',
       author_email='',
-      url='http://svn.plone.org/svn/collective/',
+      url='',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['vct'],
@@ -31,7 +31,9 @@ setup(name='vct.core',
           'zope.interface',
           # -*- Extra requirements: -*-
       ],
-      entry_points="""
       # -*- Entry points: -*-
-      """,
+      entry_points="""
+      [console_scripts]
+      start = vct.core.xmlrpc:start
+      """
       )
