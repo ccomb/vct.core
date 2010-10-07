@@ -1,16 +1,12 @@
-from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
+from SimpleXMLRPCServer import SimpleXMLRPCServer
 from vct.core import Item
+import socket
+import multiprocessing
 
-# Restrict to a particular path.
-class RequestHandler(SimpleXMLRPCRequestHandler):
+class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
+    # Restrict to a particular path.
     rpc_paths = ('/RPC2',)
-
-# Create server
-server = SimpleXMLRPCServer(("localhost", 8000),
-                            requestHandler=RequestHandler)
-server.register_introspection_functions()
-
 
 
 from zope.component import getUtility
@@ -18,6 +14,8 @@ from vct.core.interfaces import IDatabase
 
 class Database(object):
     """expose the database through xmlrpc
+
+    TODO : remove this class, and change IDatabase to reflect this ??
     """
     def __init__(self):
         self.database = getUtility(IDatabase)
@@ -35,30 +33,29 @@ class Database(object):
         return 0
 
 
-server.register_instance(Database())
+class Server(object):
+    """The vct.core server
+    """
+    def __init__(self, host, port):
+        self.server = SimpleXMLRPCServer((host, port),
+                            requestHandler=XMLRPCRequestHandler)
+        self.server.register_introspection_functions()
+        self.server.register_instance(Database())
+
+
+    def start(self, daemon=False):
+        self.process = multiprocessing.Process(target=self.server.serve_forever)
+        self.process.daemon = daemon
+        self.process.start()
+
+    def stop(self):
+        # Run the server's main loop
+        self.process.terminate()
 
 
 
-##### Register pow() function; this will use the value of
-##### pow.__name__ as the name, which is just 'pow'.
-####server.register_function(pow)
-####
-##### Register a function under a different name
-####def adder_function(x,y):
-####    return x + y
-####server.register_function(adder_function, 'add')
-####
-##### Register an instance; all the methods of the instance are
-##### published as XML-RPC methods (in this case, just 'div').
-####class MyFuncs:
-####    def div(self, x, y):
-####        return x // y
-####
-####server.register_instance(MyFuncs())
 
 
-def start():
-    # Run the server's main loop
-    server.serve_forever()
+
 
 

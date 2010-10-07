@@ -19,6 +19,8 @@ either like this:
 >>> number, results = getUtility(IDatabase).get(uid=('frsecu', '1234'))
 >>> results[0].uids
 {'frsecu': '1234'}
+>>> getUtility(IDatabase).delete('frsecu', '1234')
+
 
 
 which would allow to have a different database for observation or other objects

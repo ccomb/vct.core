@@ -2,10 +2,18 @@ XMLRPC access
 =============
 vct.core can be accessed from an xmlrpc interface.
 
+We start the server:
+
+>>> from vct.core.xmlrpc import Server
+>>> server = Server('localhost', 0)
+>>> port = server.server.server_address[1]
+>>> server.start(daemon=True)
+>>> import time; time.sleep(0.5)
+
 First we connect to the xmlrpc service
 
 >>> import xmlrpclib
->>> s = xmlrpclib.ServerProxy('http://localhost:8000')
+>>> s = xmlrpclib.ServerProxy('http://localhost:%s' % port)
 
 # Print list of available methods
 >>> print s.system.listMethods()
@@ -48,4 +56,5 @@ We can delete the item:
 >>> s.get_by_uid('frsecu', 1234)
 [0, []]
 
+>>> server.stop()
 
