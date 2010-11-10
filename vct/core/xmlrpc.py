@@ -10,7 +10,7 @@ class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
 
 from zope.component import getUtility
-from vct.core.interfaces import IDatabase
+from vct.core.db.interfaces import IDatabase
 
 class Database(object):
     """expose the database through xmlrpc

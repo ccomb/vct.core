@@ -1,6 +1,7 @@
 from zope.interface import implements
 from zope.component import adapts
-from vct.core.interfaces import IDatabase, IItem
+from vct.core.interfaces import IItem
+from vct.core.db.interfaces import IDatabase
 from vct.core.item import Item
 
 # zodb

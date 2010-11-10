@@ -6,11 +6,11 @@ from vct.core.patient import Patient
 from vct.core.careprovider import CareProvider
 from vct.core.agent import Agent
 from vct.core.observation import Observation
-from vct.core import database
+from vct.core.db import zodb
 
 # component registry
 gsm = getGlobalSiteManager()
-gsm.registerAdapter(database.ItemZODBStorage)
-gsm.registerUtility(database.zodb_storage)
+gsm.registerAdapter(zodb.ItemZODBStorage)
+gsm.registerUtility(zodb.zodb_storage)
 
 

@@ -13,7 +13,7 @@ We can store an observation
 
 either like this:
 
->>> from vct.core.interfaces import IDatabase
+>>> from vct.core.db.interfaces import IDatabase
 >>> from zope.component import getUtility
 >>> IDatabase(observation).put('frsecu', '1234')
 >>> number, results = getUtility(IDatabase).get(uid=('frsecu', '1234'))

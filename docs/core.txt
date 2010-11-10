@@ -77,7 +77,7 @@ Create, Read, Updade, Delete, Search
 
 An item contains a data attribute holding data.
 
->>> from vct.core.interfaces import IDatabase
+>>> from vct.core.db.interfaces import IDatabase
 >>> item = Item()
 >>> item.data = {'key': 'value1'}
 
@@ -182,11 +182,23 @@ Capabilities
 Group
 -----
 
->>> from vct.core.interfaces import IGroup
+a group is a collection of items, people, etc.
+
+>>> from vct.core.group import IGroup
+>>> from vct.core.group import Group
+>>> patients = Group(name=u"patients")
+>>> 
+
+We can add items to the group, delete items
+
+We can ask to which groups belongs an item
 
 
 Trust level
 -----------
+#>>> from vct.core.trust
+
+
 
 Versionning
 -----------
