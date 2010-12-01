@@ -196,8 +196,58 @@ We can ask to which groups belongs an item
 
 Trust level
 -----------
-#>>> from vct.core.trust
+Any information has a trust level.
 
+>>> item = Item()
+>>> item.name = u'Etienne'
+>>> import datetime
+>>> item.birth_date = datetime.date(2001, 1, 1)
+
+We want the item to provide trust features:
+
+>>> from vct.core.trust import ITrustable
+>>> from zope.interface import alsoProvides
+>>> alsoProvides(item, ITrustable)
+
+We've just entered the information, so we're responsible for setting the trust
+level. We're not sure about the birth date. What is its trust level?
+
+>>> from vct.core.trust import ITrust
+>>> ITrust(item).set_value('birth_date', 0.4)
+>>> ITrust(item).get_value('birth_date')
+0.40000000000000002
+
+We can store different trust level as strings:
+
+>>> ITrust(item).levels = {'sure': (0.5, 1.0),
+...                           'possible': (0.0, 0.5)}
+>>> ITrust(item).levels
+{'sure': (0.5, 1.0), 'possible': (0.0, 0.5)}
+
+The trust level can be queried as a identifier:
+
+>>> ITrust(item).get_level('birthdate')
+'possible'
+
+We can also store the identifier:
+
+>>> ITrust(item).set_level('birthdate', 'sure')
+>>> ITrust(item).get_level('birthdate')
+'sure'
+>>> ITrust(item).get_value('birthdate')
+0.75
+>>> ITrust(item).set_level('birthdate') = 'possible'
+>>> ITrust(item).get_level('birthdate')
+'possible'
+>>> ITrust(item).get_value('birthdate')
+0.25
+
+>>> ITrust(item).set_value('birthdate') = 0.2
+>>> ITrust(item).get_level('birthdate')
+'possible'
+>>> ITrust(item).set_value('birthdate') = 0.8
+>>> ITrust(item).get_level('birthdate')
+'sure'
 
 
 Versionning

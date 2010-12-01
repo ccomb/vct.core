@@ -7,10 +7,13 @@ from vct.core.careprovider import CareProvider
 from vct.core.agent import Agent
 from vct.core.observation import Observation
 from vct.core.db import zodb
+from vct.core import trust
 
 # component registry
 gsm = getGlobalSiteManager()
 gsm.registerAdapter(zodb.ItemZODBStorage)
 gsm.registerUtility(zodb.zodb_storage)
+
+gsm.registerAdapter(trust.Trust)
 
 

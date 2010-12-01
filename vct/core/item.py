@@ -6,3 +6,8 @@ class Item(object):
     data = None
     uids = None
 
+    def __init__(self):
+        self.data = {}
+        self.uids = {}
+
+

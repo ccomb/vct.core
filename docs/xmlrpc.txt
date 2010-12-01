@@ -16,7 +16,7 @@ First we connect to the xmlrpc service
 >>> s = xmlrpclib.ServerProxy('http://localhost:%s' % port)
 
 # Print list of available methods
->>> print s.system.listMethods()
+>>> print s.system.db.listMethods()
 ['delete', 'get_by_data', 'get_by_uid', 'put',
 'system.listMethods', 'system.methodHelp', 'system.methodSignature']
 
