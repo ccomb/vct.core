@@ -29,6 +29,7 @@ setup(name='vct.core',
           'setuptools',
           'zope.component',
           'zope.interface',
+          'zope.schema',
           # -*- Extra requirements: -*-
       ],
       # -*- Entry points: -*-

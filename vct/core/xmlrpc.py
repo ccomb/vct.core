@@ -1,8 +1,8 @@
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from vct.core import Item
-import socket, sys
-import multiprocessing
+from vct.core.interfaces import IModel
+import multiprocessing, socket, sys
 
 class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     # Restrict to a particular path.
@@ -12,7 +12,7 @@ class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 from zope.component import getUtility
 from vct.core.db.interfaces import IDatabase
 
-class Database(object):
+class Methods(object):
     """expose the database through xmlrpc
 
     TODO : remove this class, and change IDatabase to reflect this ??
@@ -32,6 +32,24 @@ class Database(object):
         getUtility(IDatabase).delete(uid_name, uid_value)
         return 0
 
+    def get_model(self, name):
+        """return a definition of the model
+        """
+        interface = getUtility(IModel, name)
+        model = {}
+        for field_name in interface:
+            field = interface[field_name]
+            model[field.__name__] = dict([
+                (name, value)
+                for (name,value) in field.__dict__.items()
+                if not name.startswith('_') and name != 'interface'
+                ])
+            model[field.__name__]['type'] = field.__class__.__name__.lower()
+        return model
+
+
+
+
 
 class Server(object):
     """The vct.core server
@@ -39,9 +57,10 @@ class Server(object):
     def __init__(self, host, port):
         print 'listening on %s:%s' % (host, port)
         self.server = SimpleXMLRPCServer((host, port),
-                            requestHandler=XMLRPCRequestHandler)
+                            requestHandler=XMLRPCRequestHandler,
+                            allow_none=True)
         self.server.register_introspection_functions()
-        self.server.register_instance(Database())
+        self.server.register_instance(Methods())
 
 
     def start(self, daemon=False):

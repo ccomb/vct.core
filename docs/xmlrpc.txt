@@ -6,6 +6,7 @@ We start the server:
 
 >>> from vct.core.xmlrpc import Server
 >>> server = Server('localhost', 0)
+listening on localhost:0
 >>> port = server.server.server_address[1]
 >>> server.start(daemon=True)
 >>> import time; time.sleep(0.5)
@@ -16,9 +17,30 @@ First we connect to the xmlrpc service
 >>> s = xmlrpclib.ServerProxy('http://localhost:%s' % port)
 
 # Print list of available methods
->>> print s.system.db.listMethods()
-['delete', 'get_by_data', 'get_by_uid', 'put',
+
+# TODO : change xmllrpc exposition to obtain:
+#>>> print s.system.db.listMethods()
+>>> print s.system.listMethods()
+['delete', 'get_by_data', 'get_by_uid', 'get_model', 'put',
 'system.listMethods', 'system.methodHelp', 'system.methodSignature']
+
+We can introspect a model:
+
+>>> from pprint import pprint
+>>> model = s.get_model('observation')
+>>> model.keys()
+['status', 'title', 'text', 'image', 'link', 'date']
+>>> pprint(model.values()[0])
+    {'default': None,
+     'description': 'status of the action',
+     'max_length': None,
+     'min_length': 0,
+     'order': 26,
+     'readonly': False,
+     'required': False,
+     'title': 'status',
+     'type': 'textline'}
+
 
 We can use the "get" method of the database:
 
@@ -33,7 +55,6 @@ We try to save an item
 
 We try to retrieve the object given the uid:
 
->>> from pprint import pprint
 >>> pprint(s.get_by_uid('frsecu', 1234), width=1)
 [1,
  [{'data': {'name': 'john',
