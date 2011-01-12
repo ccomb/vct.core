@@ -15,5 +15,6 @@ def test_suite( ):
              DocFileSuite('../../docs/observation.txt', tearDown=tearDown, optionflags=optionflags),
              DocFileSuite('../../docs/action.txt', tearDown=tearDown, optionflags=optionflags),
              DocFileSuite('../../docs/xmlrpc.txt', tearDown=tearDown, optionflags=optionflags),
+             DocFileSuite('../../docs/introspection.txt', tearDown=tearDown, optionflags=optionflags),
             ]
     return unittest.TestSuite(suite)

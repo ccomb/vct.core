@@ -1,5 +1,12 @@
 from zope.interface import Interface, Attribute
 
+class IModel(Interface):
+    """ marker interface to distinguish model interfaces
+    It allows to retrieve any interface of type IModel, with its name
+    (see __init__.py with registry configuration)
+    """
+
+
 class IItem(Interface):
     """medical item interface.
     An item is just a placeholder for a dict of data,
