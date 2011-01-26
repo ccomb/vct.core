@@ -1,8 +1,8 @@
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 from SimpleXMLRPCServer import SimpleXMLRPCServer
-from vct.core import Item
-from vct.core.interfaces import IModel
+from vct.core.interfaces import IItem
 import multiprocessing, socket, sys
+import colander, deform
 
 class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
     # Restrict to a particular path.
@@ -19,33 +19,63 @@ class Methods(object):
     """
     def __init__(self):
         self.database = getUtility(IDatabase)
+
     def get_by_uid(self, uid_name, uid_value):
         return self.database.get(uid=(uid_name, uid_value))
+
     def get_by_data(self, data):
         return self.database.get(data=data)
-    def put(self, uid_name, uid_value, data):
-        item = Item()
+
+    def put(self, uid_name, uid_value, data, model_name='item'):
+        Model = getUtility(IItem, model_name)
+        item = Model()
         item.data = data
+        if data is not None and item.schema is not None:
+            try:
+                item.schema.deserialize(data)
+            except colander.Invalid, e:
+                return e.asdict()
         IDatabase(item).put(uid_name, uid_value)
         return 0
+
     def delete(self, uid_name, uid_value):
         getUtility(IDatabase).delete(uid_name, uid_value)
         return 0
 
-    def get_model(self, name):
-        """return a definition of the model
+    def get_schema(self, name):
+        """return a definition of the schema
         """
-        interface = getUtility(IModel, name)
-        model = {}
-        for field_name in interface:
-            field = interface[field_name]
-            model[field.__name__] = dict([
+        model = getUtility(IItem, name)
+        schema_dict = {}
+        for field in model.schema:
+            schema_dict[field.name] = dict([
                 (name, value)
                 for (name,value) in field.__dict__.items()
-                if not name.startswith('_') and name != 'interface'
+                if not name.startswith('_')
                 ])
-            model[field.__name__]['type'] = field.__class__.__name__.lower()
-        return model
+            schema_dict[field.name]['typ'] = field.typ.__class__.__name__.lower()
+            schema_dict[field.name]['widget'] = field.widget.__class__.__name__.lower()
+            schema_dict[field.name]['default'] = field.default.__class__.__name__.lower()
+            del schema_dict[field.name]['missing'] # XXX not yet supported
+        return schema_dict
+
+    def get_form(self, model_name, format, data=None):
+        """return a ready to use form for the given model,
+        using the given format and given data.
+        """
+        Model = getUtility(IItem, model_name)
+        model = Model()
+        if format == 'html':
+            myform = deform.Form(model.schema, buttons=('submit',))
+            if data is not None:
+                try:
+                    model.schema.deserialize(data)
+                except colander.Invalid, e:
+                    return myform.render(data)
+            return myform.render()
+        else:
+            raise NotImplementedError
+
 
 
 

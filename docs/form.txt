@@ -1,0 +1,38 @@
+Form generation
+===============
+
+vct.core can be asked to generate input forms to be reused in 3rd-party applications, so that developers don't have to handle the form-generation themselves.
+
+We start the server:
+
+>>> from vct.core.xmlrpc import Server
+>>> server = Server('localhost', 0)
+listening on localhost:0
+>>> port = server.server.server_address[1]
+>>> server.start(daemon=True)
+>>> import time; time.sleep(0.5)
+
+First we connect to the xmlrpc service
+
+>>> import xmlrpclib
+>>> s = xmlrpclib.ServerProxy('http://localhost:%s' % port)
+
+We can ask for a specific input form
+
+>>> s.get_form('observation', 'html')
+'<form id="deform" ...
+
+When we fill in the form, we submit to our 3rd-party application. This application is then responsible for retrieving form data and sending it trough xmlrpc using the remote "put" method. The server will then validate and store data.
+
+>>> bad_data_from_form = {'bad_data':'bad_data', 'title':'test'}
+>>> response = s.put('frsecu', 1234, bad_data_from_form, 'observation')
+>>> print response
+{'date': 'Required', 'text': 'Required', 'status': 'Required', 'link': 'Required'}
+
+If data is not validated, the server return and error response with a dict containing details about the error. In that case, the application should ask for the form again, providing the error dict:
+
+>>> form = s.get_form('observation', 'html', bad_data_from_form)
+>>> '<input type="text" name="title" value="test"' in form
+True
+
+

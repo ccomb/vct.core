@@ -21,16 +21,6 @@ It can be specialized in the different types of objects:
 >>> item = Item()
 >>> action, issue, observation = Action(), Issue(), Observation()
 
-All objects are items:
-
->>> isinstance(action, Item)
-True
->>> isinstance(issue, Item)
-True
->>> isinstance(observation, Item)
-True
-
-
 
 Agent
 -----
@@ -252,6 +242,14 @@ Trust level
 
 Versionning
 -----------
+
+We should just add a 'version' key in the data dict, giving the version of the current data:
+
+{
+'uids': {'frsecu':'34535235234235', 'hop1': '123'},
+'data': {'firstname': u'John', 'lastname': u'Doe'},
+'version': 'last',
+}
 
 
 Advanced objects

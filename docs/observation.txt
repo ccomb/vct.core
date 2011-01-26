@@ -5,8 +5,8 @@ We can create an observation:
 
 >>> from vct.core.observation import Observation
 >>> observation = Observation()
->>> observation.title = 'something'
->>> observation.title
+>>> observation.data['title'] = 'something'
+>>> observation.data['title']
 'something'
 
 We can store an observation

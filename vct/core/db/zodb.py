@@ -40,6 +40,7 @@ class ZODBStorage(object):
             item = Item()
             item.data = dict(zodb_item.data)
             item.uids = dict(zodb_item.uids)
+            # TODO item.schema?
             return (1, [item])
 
         if data is not None:
@@ -51,6 +52,7 @@ class ZODBStorage(object):
                         item = Item()
                         item.data = dict(zodb_item.data)
                         item.uids = dict(zodb_item.uids)
+                        #TODO item.schema = ?
                         results.add(item)
             return len(results), list(results)
         return (0, [])

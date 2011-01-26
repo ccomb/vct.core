@@ -21,25 +21,26 @@ First we connect to the xmlrpc service
 # TODO : change xmllrpc exposition to obtain:
 #>>> print s.system.db.listMethods()
 >>> print s.system.listMethods()
-['delete', 'get_by_data', 'get_by_uid', 'get_model', 'put',
+['delete', 'get_by_data', 'get_by_uid', 'get_form', 'get_schema', 'put',
 'system.listMethods', 'system.methodHelp', 'system.methodSignature']
 
-We can introspect a model:
+We can introspect a schema:
 
 >>> from pprint import pprint
->>> model = s.get_model('observation')
->>> model.keys()
-['status', 'title', 'text', 'image', 'link', 'date']
->>> pprint(model.values()[0])
-    {'default': None,
-     'description': 'status of the action',
-     'max_length': None,
-     'min_length': 0,
-     'order': 26,
-     'readonly': False,
+>>> schema = s.get_schema('observation')
+>>> schema.keys()
+['date', 'text', 'status', 'link', 'title']
+>>> pprint(schema.values()[1])
+    {'after_bind': None,
+     'children': [],
+     'default': '_null',
+     'description': 'observation content',
+     'name': 'text',
      'required': False,
-     'title': 'status',
-     'type': 'textline'}
+     'title': 'content',
+     'typ': 'string',
+     'validator': None,
+     'widget': 'richtextwidget'}
 
 
 We can use the "get" method of the database:

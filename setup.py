@@ -29,7 +29,8 @@ setup(name='vct.core',
           'setuptools',
           'zope.component',
           'zope.interface',
-          'zope.schema',
+          'colander',
+          'deform',
           # -*- Extra requirements: -*-
       ],
       # -*- Entry points: -*-

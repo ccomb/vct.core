@@ -6,7 +6,7 @@ from vct.core.patient import Patient
 from vct.core.careprovider import CareProvider
 from vct.core.agent import Agent
 from vct.core.observation import Observation
-from vct.core.interfaces import IObservation, IModel
+from vct.core.interfaces import IItem
 from vct.core.db import zodb
 from vct.core import trust
 
@@ -17,5 +17,5 @@ gsm.registerUtility(zodb.zodb_storage)
 
 gsm.registerAdapter(trust.Trust)
 
-
-gsm.registerUtility(IObservation, IModel, 'observation')
+gsm.registerUtility(Item, IItem, 'item')
+gsm.registerUtility(Observation, IItem, 'observation')

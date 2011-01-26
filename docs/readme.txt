@@ -6,6 +6,7 @@ Abstract
 
 - use from any platform and languages
 - extend with plugins
+- simple access through xmlrpc
 
 Overview
 ~~~~~~~~
@@ -17,6 +18,7 @@ ways:
 - an XML-RPC (or REST?) service allows the kernel to be used by 3rd party services.
 - a plugin infrastructure allows the kernel to be extended with additional
   capabilities (databases, services, etc.) and to trigger external services.
+- an optional ready to use form generation system for easy input
 
 You can access the VCT Core services using any language and platform, through
 the use of simple XML-RPC messages. See the examples section below to discover

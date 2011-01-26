@@ -3,10 +3,10 @@ We can retrieve any datamodel through xmlrpc.
 
 First we check we can retrieve any interface given its name:
 
->>> from vct.core.interfaces import IModel
+>>> from vct.core.interfaces import IItem
 >>> from zope.component import getUtility
->>> i = getUtility(IModel, 'observation')
+>>> i = getUtility(IItem, 'observation')
 >>> i.__name__
-'IObservation'
+'Observation'
 
 
