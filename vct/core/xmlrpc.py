@@ -29,10 +29,9 @@ class Methods(object):
     def put(self, uid_name, uid_value, data, model_name='item'):
         Model = getUtility(IItem, model_name)
         item = Model()
-        item.data = data
         if data is not None and item.schema is not None:
             try:
-                item.schema.deserialize(data)
+                item.data = item.schema.deserialize(data)
             except colander.Invalid, e:
                 return e.asdict()
         IDatabase(item).put(uid_name, uid_value)
@@ -69,9 +68,9 @@ class Methods(object):
             myform = deform.Form(model.schema, buttons=('submit',))
             if data is not None:
                 try:
-                    model.schema.deserialize(data)
-                except colander.Invalid, e:
-                    return myform.render(data)
+                    myform.validate(data.items())
+                except deform.ValidationFailure, e:
+                    return e.render()
             return myform.render()
         else:
             raise NotImplementedError

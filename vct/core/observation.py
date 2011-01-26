@@ -9,8 +9,8 @@ class IObservation(Interface):
 class ObservationSchema(colander.Schema):
     """schema of an observation
     """
-    date = colander.SchemaNode(colander.DateTime(),
-                               title=u'Date, time',
+    date = colander.SchemaNode(colander.Date(),
+                               title=u'Date',
                                description=u'Date and time')
     title = colander.SchemaNode(colander.String(),
                                 title=u'Title',
@@ -18,16 +18,13 @@ class ObservationSchema(colander.Schema):
     text = colander.SchemaNode(colander.String(),
                                title=u'content',
                                description=u'observation content',
-                               widget=deform.widget.RichTextWidget(),
-                               required=False)
+                               widget=deform.widget.RichTextWidget())
     status = colander.SchemaNode(colander.String(),
                                  title=u"status",
-                                 description=u"status of the action",
-                                 required=False)
+                                 description=u"status of the action")
     link = colander.SchemaNode(colander.String(),
                                title=u"Link",
-                               description=u'(Link to an external annex)',
-                               required=False)
+                               description=u'(Link to an external annex)')
 
 class Observation(Item):
     """a medical observation
