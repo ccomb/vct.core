@@ -2,7 +2,7 @@ from vct.core.item import Item
 from zope.interface import implements
 import colander, deform
 from zope.interface import Interface
-from vct.core.group import GROUPS #XXX retrieve the group list from the db
+from vct.core.role import ROLES #XXX retrieve the role list from the db
 import colander
 
 class IUser(Interface):
@@ -19,8 +19,8 @@ class UserSchema(colander.Schema):
                                title=u'Password',
                                description=u'Password',
                                widget=deform.widget.CheckedPasswordWidget())
-    groups = colander.SchemaNode(deform.Set(),
-                                 widget=deform.widget.CheckboxChoiceWidget(values=GROUPS))
+    roles = colander.SchemaNode(deform.Set(),
+                                 widget=deform.widget.CheckboxChoiceWidget(values=ROLES))
 
 
 class User(Item):

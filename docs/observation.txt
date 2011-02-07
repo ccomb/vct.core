@@ -9,18 +9,27 @@ We can create an observation:
 >>> observation.data['title']
 'something'
 
-We can store an observation
-
-either like this:
+We can store an observation:
 
 >>> from vct.core.db.interfaces import IDatabase
->>> from zope.component import getUtility
->>> IDatabase(observation).put('frsecu', '1234')
->>> number, results = getUtility(IDatabase).get(uid=('frsecu', '1234'))
->>> results[0].uids
-{'frsecu': '1234'}
->>> getUtility(IDatabase).delete('frsecu', '1234')
+>>> local_uid = IDatabase(observation).put('frsecu', '1234')
 
+We can retrieve an observation:
 
+>>> number, results = IDatabase(Observation()).get(uid=('frsecu', '1234'))
+>>> obs = results[0]
+>>> obs.uids['frsecu']
+'1234'
+>>> obs.data
+{'title': 'something'}
+>>> type(obs)
+<class 'vct.core.observation.Observation'>
 
-which would allow to have a different database for observation or other objects
+We can delete an observation, given a mandatory uid:
+
+>>> IDatabase(observation).delete('frsecu', '1234')
+>>> number, results = IDatabase(Observation()).get(uid=('frsecu', '1234'))
+>>> number
+0
+
+>>> IDatabase(observation).delete('server1', local_uid)

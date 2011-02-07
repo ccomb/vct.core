@@ -13,6 +13,7 @@ class Item(object):
     data = None
     uids = None
     schema = None
+    version = None
 
     def __init__(self):
         self.data = {}

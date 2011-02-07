@@ -73,46 +73,56 @@ An item contains a data attribute holding data.
 
 We can save the object using a uid:
 
->>> IDatabase(item).put()
-Traceback (most recent call last):
-...
-ValueError: No uids
->>> IDatabase(item).put('frsecu', 1234)
+>>> local_uid = IDatabase(item).put('frsecu', 1234)
 >>> del item
 
 We can retrieve the object given a uid:
 
->>> from zope.component import getUtility
->>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> number, results = IDatabase(Item()).get(uid=('frsecu', 1234))
 >>> number
 1
+
+We check that the given uid and data are there
 >>> item = results[0]
->>> item.uids
-{'frsecu': 1234}
+>>> item.uids['frsecu']
+1234
 >>> item.data
 {'key': 'value1'}
+
+We also have an automatic db-local uid:
+
+>>> item.uids['server1'] == local_uid
+True
 
 We can retrieve the object using any key:
 
->>> number, results = getUtility(IDatabase).get(data={'key': 'value1'})
+>>> number, results = IDatabase(Item()).get(data={'key': 'value1'})
 >>> number
 1
 >>> item = results[0]
 >>> item.data
 {'key': 'value1'}
->>> item.uids
-{'frsecu': 1234}
+>>> item.uids['frsecu']
+1234
+>>> item.uids['server1'] == local_uid
+True
+
+
 
 We can update the object data:
 
 >>> item.data['key'] = 'value2'
 >>> item.data['key2'] = 10
->>> IDatabase(item).put()
+>>> local_uid1 = IDatabase(item).put()
+>>> local_uid2 = IDatabase(item).put()
+>>> local_uid == local_uid1 == local_uid2
+True
+
 >>> del item
->>> number, results = getUtility(IDatabase).get(data={'key': 'value1'})
+>>> number, results = IDatabase(Item()).get(data={'key': 'value1'})
 >>> number
 0
->>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number, results = IDatabase(Item()).get(data={'key': 'value2'})
 >>> number
 1
 >>> item = results[0]
@@ -120,19 +130,22 @@ We can update the object data:
 'value2'
 >>> item.data['key2']
 10
->>> item.uids
-{'frsecu': 1234}
+>>> item.uids['frsecu']
+1234
+>>> item.uids['server1'] == local_uid
+True
+
 
 We can also add a uid by putting again:
 
->>> IDatabase(item).put('labo1', 5678)
->>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> local_uid = IDatabase(item).put('labo1', 5678)
+>>> number, results = IDatabase(Item()).get(uid=('frsecu', 1234))
 >>> item = results[0]
 >>> item.uids['frsecu']
 1234
 >>> item.uids['labo1']
 5678
->>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> number, results = IDatabase(Item()).get(uid=('labo1', 5678))
 >>> item = results[0]
 >>> item.uids['frsecu']
 1234
@@ -141,29 +154,49 @@ We can also add a uid by putting again:
 
 We can delete the item using any uid:
 
->>> getUtility(IDatabase).delete('frsecu', 1234)
+>>> IDatabase(Item()).delete('frsecu', 1234)
 
 The item still exists, but only contains the labo1 uid:
 
->>> number, results = getUtility(IDatabase).get(uid=('frsecu', 1234))
+>>> number, results = IDatabase(Item()).get(uid=('frsecu', 1234))
 >>> number
 0
->>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> number, results = IDatabase(Item()).get(uid=('labo1', 5678))
 >>> results[0].data['key2']
 10
->>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number, results = IDatabase(Item()).get(data={'key': 'value2'})
 >>> number
 1
 
-We delete using the 2nd uid, then we cannot retrieve the object again:
+We delete using the 2nd and 3rd uid, then we cannot retrieve the object again:
 
->>> getUtility(IDatabase).delete('labo1', 5678)
->>> number, results = getUtility(IDatabase).get(uid=('labo1', 5678))
+>>> IDatabase(Item()).delete('labo1', 5678)
+>>> IDatabase(Item()).delete('server1', local_uid)
+>>> number, results = IDatabase(Item()).get(uid=('labo1', 5678))
 >>> number
 0
->>> number, results = getUtility(IDatabase).get(data={'key': 'value2'})
+>>> number, results = IDatabase(Item()).get(data={'key': 'value2'})
 >>> number
 0
+
+We can also create a new record without giving a uid. The chosen uid is returned:
+
+>>> item = Item()
+>>> item.data = {'key': 'value2'}
+
+We can also save the object without using a uid:
+
+>>> local_uid = IDatabase(item).put()
+>>> local_uid > 0
+True
+>>> IDatabase(Item()).get(uid=('server1', local_uid))[1][0].data['key']
+'value2'
+
+>>> IDatabase(Item()).delete('server1', local_uid)
+>>> number, results = IDatabase(Item()).get(data={})
+>>> number
+0
+
 
 
 Capabilities

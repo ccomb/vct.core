@@ -21,7 +21,7 @@ First we connect to the xmlrpc service
 # TODO : change xmllrpc exposition to obtain:
 #>>> print s.system.db.listMethods()
 >>> print s.system.listMethods()
-['delete', 'get_by_data', 'get_by_uid', 'get_form', 'get_schema', 'put',
+['delete', 'get_by_data', 'get_by_uid', 'get_form', 'get_schema', 'login', 'put',
 'system.listMethods', 'system.methodHelp', 'system.methodSignature']
 
 We can introspect a schema:
@@ -36,7 +36,6 @@ We can introspect a schema:
      'default': '_null',
      'description': 'observation content',
      'name': 'text',
-     'required': False,
      'title': 'content',
      'typ': 'string',
      'validator': None,
@@ -48,11 +47,12 @@ We can use the "get" method of the database:
 >>> print s.get_by_data({})
 [0, []]
 
-We try to save an item
+We try to save an item:
 
 >>> data = {'type':'patient', 'name':'john'}
->>> s.put('frsecu', 1234, data)
-0
+>>> local_uid = s.put('frsecu', 1234, data)
+>>> local_uid.isdigit()
+True
 
 We try to retrieve the object given the uid:
 
@@ -60,7 +60,9 @@ We try to retrieve the object given the uid:
 [1,
  [{'data': {'name': 'john',
             'type': 'patient'},
-   'uids': {'frsecu': 1234}}]]
+   'uids': {'frsecu': 1234,
+            'server1': ...}}]]
+
 
 We can also do a search by any data key:
 
@@ -68,7 +70,8 @@ We can also do a search by any data key:
 [1,
  [{'data': {'name': 'john',
             'type': 'patient'},
-   'uids': {'frsecu': 1234}}]]
+   'uids': {'frsecu': 1234,
+            'server1': ...}}]]
 
 
 We can delete the item:

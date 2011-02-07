@@ -17,28 +17,30 @@ class Methods(object):
 
     TODO : remove this class, and change IDatabase to reflect this ??
     """
-    def __init__(self):
-        self.database = getUtility(IDatabase)
+    def get_by_uid(self, uid_name, uid_value, model='item'):
+        Model = getUtility(IItem, model)
+        return IDatabase(Model()).get(uid=(uid_name, uid_value))
 
-    def get_by_uid(self, uid_name, uid_value):
-        return self.database.get(uid=(uid_name, uid_value))
+    def get_by_data(self, data, model='item'):
+        Model = getUtility(IItem, model)
+        return IDatabase(Model()).get(data=data)
 
-    def get_by_data(self, data):
-        return self.database.get(data=data)
-
-    def put(self, uid_name, uid_value, data, model_name='item'):
-        Model = getUtility(IItem, model_name)
+    def put(self, uid_name, uid_value, data, model='item'):
+        Model = getUtility(IItem, model)
         item = Model()
-        if data is not None and item.schema is not None:
-            try:
-                item.data = item.schema.deserialize(data)
-            except colander.Invalid, e:
-                return e.asdict()
-        IDatabase(item).put(uid_name, uid_value)
-        return 0
+        if data is not None:
+            if item.schema is not None:
+                try:
+                    item.data = item.schema.deserialize(data)
+                except colander.Invalid, e:
+                    return e.asdict()
+            else:
+                item.data = data
+        return IDatabase(item).put(uid_name, uid_value)
 
-    def delete(self, uid_name, uid_value):
-        getUtility(IDatabase).delete(uid_name, uid_value)
+    def delete(self, uid_name, uid_value, model='item'):
+        Model = getUtility(IItem, model)
+        IDatabase(Model()).delete(uid_name, uid_value)
         return 0
 
     def get_schema(self, name):
@@ -75,6 +77,19 @@ class Methods(object):
         else:
             raise NotImplementedError
 
+    def login(self, login, password):
+        """check the login and password and returns a token
+        """
+        Model = getUtility(IItem, 'user')
+        number, users = IDatabase(Model()).get(uids={'username':login})
+        assert(number==1)
+        user = users[0]
+        if password == user.data['password']:
+            token = IDatabase(Token()).put()
+            return token
+        else:
+            return False
+        
 
 class Server(object):
     """The vct.core server
