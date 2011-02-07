@@ -6,3 +6,4 @@ vct.core.egg-info/
 .*\.swp$
 develop-eggs/
 Data.fs
+.*~$

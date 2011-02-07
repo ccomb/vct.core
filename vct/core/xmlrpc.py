@@ -68,16 +68,12 @@ class Methods(object):
             myform = deform.Form(model.schema, buttons=('submit',))
             if data is not None:
                 try:
-                    myform.validate(data.items())
+                    myform.validate(data)
                 except deform.ValidationFailure, e:
                     return e.render()
             return myform.render()
         else:
             raise NotImplementedError
-
-
-
-
 
 
 class Server(object):
