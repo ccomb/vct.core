@@ -24,7 +24,7 @@ We can ask for a specific input form
 
 When we fill in the form, we submit to our 3rd-party application. This application is then responsible for retrieving form data and sending it trough xmlrpc using the remote "put" method. The server will then validate and store data.
 
->>> bad_data_from_form = {'bad_data':'bad_data', 'title':'test'}
+>>> bad_data_from_form = [('bad_data','bad_data'), ('title','test')]
 >>> response = s.put('frsecu', 1234, bad_data_from_form, 'observation')
 >>> print response
 {'date': 'Required', 'text': 'Required', 'status': 'Required', 'link': 'Required'}
@@ -33,6 +33,8 @@ If data is not validated, the server return and error response with a dict conta
 
 >>> form = s.get_form('observation', 'html', bad_data_from_form)
 >>> '<input type="text" name="title" value="test"' in form
+True
+>>> 'There was a problem with your submission' in form
 True
 
 
