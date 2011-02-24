@@ -89,12 +89,12 @@ class ItemZODBStorage(object):
             # TODO item.schema?
             return (1, [item])
 
-        if data is not None:
+        if data is not None and len(data) > 0:
             # TODO awfully slow, replace with a catalog search!
             items = set()
             for container in self.root.keys():
                 for zodb_item in self.root[container].values():
-                    if all([zodb_item.data[key] == data[key] for key in data.keys()]):
+                    if all([key in zodb_item.data and zodb_item.data.get(key) == data.get(key) for key in data.keys()]):
                         items.add(zodb_item)
             results = []
             for i in items:

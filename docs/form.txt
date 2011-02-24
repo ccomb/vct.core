@@ -31,7 +31,7 @@ When we fill in the form, we submit to our 3rd-party application. This applicati
 
 If data is not validated, the server return and error response with a dict containing details about the error. In that case, the application should ask for the form again, providing the error dict:
 
->>> form = s.get_form('observation', 'html', bad_data_from_form)
+>>> form = s.get_form('observation', 'html', True, bad_data_from_form)
 >>> '<input type="text" name="title" value="test"' in form
 True
 >>> 'There was a problem with your submission' in form

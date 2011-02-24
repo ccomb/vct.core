@@ -1,7 +1,7 @@
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from vct.core.interfaces import IItem
-import multiprocessing, socket, sys
+import multiprocessing, socket, sys, datetime
 import colander, deform
 
 class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
@@ -23,7 +23,13 @@ class Methods(object):
 
     def get_by_data(self, data, model='item'):
         Model = getUtility(IItem, model)
-        return IDatabase(Model()).get(data=data)
+        nb, objs = IDatabase(Model()).get(data=data)
+        for obj in objs:
+            for key, value in obj.data.items():
+                if type(value) is datetime.date:
+                    obj.data[key] = datetime.datetime(value.year, value.month, value.day)
+        print objs[0].data
+        return nb, objs
 
     def put(self, uid_name, uid_value, data, model='item'):
         Model = getUtility(IItem, model)
@@ -36,7 +42,7 @@ class Methods(object):
                     return e.asdict()
             else:
                 item.data = data
-        return IDatabase(item).put(uid_name, uid_value)
+        return IDatabase(item).put(uid_name or None, uid_value or None)
 
     def delete(self, uid_name, uid_value, model='item'):
         Model = getUtility(IItem, model)
@@ -60,7 +66,7 @@ class Methods(object):
             del schema_dict[field.name]['missing'] # XXX not yet supported
         return schema_dict
 
-    def get_form(self, model_name, format, data=None):
+    def get_form(self, model_name, format, validate=True, data=None):
         """return a ready to use form for the given model,
         using the given format and given data.
         """
@@ -68,12 +74,12 @@ class Methods(object):
         model = Model()
         if format == 'html':
             myform = deform.Form(model.schema, buttons=('submit',))
-            if data is not None:
+            if data is not None and validate:
                 try:
                     myform.validate(data)
                 except deform.ValidationFailure, e:
                     return e.render()
-            return myform.render()
+            return myform.render(appstruct=data)
         else:
             raise NotImplementedError
 
@@ -89,7 +95,7 @@ class Methods(object):
             return token
         else:
             return False
-        
+
 
 class Server(object):
     """The vct.core server

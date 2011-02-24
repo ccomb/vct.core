@@ -1,5 +1,6 @@
 from vct.core.item import Item
 from zope.interface import implements
+from zope.component import adapts
 import colander, deform
 from zope.interface import Interface
 from vct.core.role import ROLES #XXX retrieve the role list from the db
@@ -28,4 +29,28 @@ class User(Item):
     """
     implements(IUser)
     schema = UserSchema()
+
+
+class IUserPreferences(Interface):
+    pass
+
+
+class UserPreferencesSchema(colander.Schema):
+    language = colander.SchemaNode(colander.String(),
+                                   title=u'preferred language',
+                                   validator=colander.OneOf(
+                                       [u'english', u'french', u'spanish',
+                                        u'german', u'greek', u'turkish']))
+    initial_patient_view = colander.SchemaNode(colander.String(),
+                                               title=u'Initial Patient View')
+
+
+class UserPreferences(object):
+    """adapter for user preferences
+    """
+    implements(IUserPreferences)
+    adapts(IUser)
+    #def __init__(self):
+    #    self.language = 'english'
+    #
 

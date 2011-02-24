@@ -7,6 +7,7 @@ from vct.core.careprovider import CareProvider
 from vct.core.agent import Agent
 from vct.core.user import User
 from vct.core.observation import Observation
+from vct.core.patient import Patient
 from vct.core.interfaces import IItem
 from vct.core.db import zodb
 from vct.core import trust
@@ -24,7 +25,9 @@ gsm = getGlobalSiteManager()
 gsm.registerAdapter(zodb.ItemZODBStorage)
 
 gsm.registerAdapter(trust.Trust)
+gsm.registerAdapter(user.UserPreferences)
 
 gsm.registerUtility(Item, IItem, 'item')
 gsm.registerUtility(Observation, IItem, 'observation')
+gsm.registerUtility(Patient, IItem, 'patient')
 gsm.registerUtility(User, IItem, 'user')
