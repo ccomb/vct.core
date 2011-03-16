@@ -1,10 +1,11 @@
 from vct.core.item import Item
 from zope.interface import Interface, implements
-import colander
+import colander, deform
 
 class IPatient(Interface):
     pass
 
+genders = {'M': 'Male', 'F': 'Female', '?': 'Unknown'}
 
 class PatientSchema(colander.Schema):
     id = colander.SchemaNode(colander.String(),
@@ -16,7 +17,8 @@ class PatientSchema(colander.Schema):
     birthdate = colander.SchemaNode(colander.Date(),
                                     title=u'Birth date')
     sex = colander.SchemaNode(colander.String(),
-                                    validator=colander.OneOf(['Male', 'Female', 'Unknown']),
+                                    validator=colander.OneOf(genders.keys()),
+                                    widget=deform.widget.SelectWidget(values=genders.items()),
                                     title=u'Sex')
     address = colander.SchemaNode(colander.String(),
                                    title=u'Address')
