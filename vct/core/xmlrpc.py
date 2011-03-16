@@ -22,6 +22,7 @@ class Methods(object):
         return IDatabase(Model()).get(uid=(uid_name, uid_value))
 
     def get_by_data(self, data, model='item'):
+        import pdb; pdb.set_trace()
         Model = getUtility(IItem, model)
         nb, objs = IDatabase(Model()).get(data=data)
         for obj in objs:
@@ -110,9 +111,12 @@ class Server(object):
 
 
     def start(self, daemon=False):
-        self.process = multiprocessing.Process(target=self.server.serve_forever)
-        self.process.daemon = daemon
-        self.process.start()
+        if not daemon:
+            target=self.server.serve_forever()
+        else:
+            self.process = multiprocessing.Process(target=self.server.serve_forever)
+            self.process.daemon = daemon
+            self.process.start()
 
     def stop(self):
         # Run the server's main loop
@@ -129,8 +133,5 @@ def start():
 
     server = Server(host, port)
     server.start()
-
-
-
 
 
