@@ -22,14 +22,12 @@ class Methods(object):
         return IDatabase(Model()).get(uid=(uid_name, uid_value))
 
     def get_by_data(self, data, model='item'):
-        import pdb; pdb.set_trace()
         Model = getUtility(IItem, model)
         nb, objs = IDatabase(Model()).get(data=data)
         for obj in objs:
             for key, value in obj.data.items():
                 if type(value) is datetime.date:
                     obj.data[key] = datetime.datetime(value.year, value.month, value.day)
-        print objs[0].data
         return nb, objs
 
     def put(self, uid_name, uid_value, data, model='item'):
