@@ -116,7 +116,7 @@ class ItemZODBStorage(object):
         del self.root[uid_name][uid_value].uids[uid_name]
         # delete the reference (other may exist in other containers)
         del self.root[uid_name][uid_value]
-        self.connection.close()
         transaction.commit()
+        self.connection.close()
 
 

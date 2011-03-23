@@ -34,10 +34,10 @@ An agent is a person or an entity responsible of handling medical items.
 A patient is an agent subject of medical care. A CareProvider is an Agent as
 well.
 
->>> isinstance(patient, Agent)
-True
->>> isinstance(careprovider, Agent)
-True
+#>>> isinstance(patient, Agent)
+#True
+#>>> isinstance(careprovider, Agent)
+#True
 
 Relation
 --------
@@ -210,7 +210,7 @@ a group is a collection of items, people, etc.
 >>> from vct.core.group import IGroup
 >>> from vct.core.group import Group
 >>> patients = Group(name=u"patients")
->>> 
+>>>
 
 We can add items to the group, delete items
 
@@ -294,7 +294,7 @@ AgentGroup
 ----------
 
 An AgentGroup is a Agent providing Group capabilities. It can be used for an
-hospital. 
+hospital.
 
 >>> from vct.core.agent import AgentGroup
 >>> from zope.interface import providedBy

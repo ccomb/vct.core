@@ -34,6 +34,18 @@ class Methods(object):
         nb, objs = IDatabase(Model()).get(uid=(uid_name, uid_value))
         return nb, date2string(objs)
 
+    def get_by_uids(self, uid_name, uid_values, model='item'):
+        results = [0, []]
+        Model = getUtility(IItem, model)
+        db = IDatabase(Model())
+        for uid_value in uid_values:
+            if uid_name == 'local':
+                uid_name = vct.core.SERVER_NAME
+            nb, objs = db.get(uid=(uid_name, uid_value))
+            results[0] += 1
+            results[1].append(date2string(objs)[0])
+        return results
+
     def get_by_data(self, data, model='item'):
         Model = getUtility(IItem, model)
         nb, objs = IDatabase(Model()).get(data=data)
@@ -51,6 +63,25 @@ class Methods(object):
             else:
                 item.data = data
         return IDatabase(item).put(uid_name or None, uid_value or None)
+
+    def put_many(self, records, model='item'):
+        Model = getUtility(IItem, model)
+        item = Model()
+        db = IDatabase(item)
+        results = []
+        for record in records:
+            uid_name, uid_value, data = record
+            if data is not None:
+                if item.schema is not None:
+                    try:
+                        item.data = item.schema.deserialize(data)
+                    except colander.Invalid, e:
+                        results.append(e.asdict())
+                else:
+                    item.data = data
+                uid = db.put(uid_name or None, uid_value or None)
+                results.append(uid)
+        return results
 
     def delete(self, uid_name, uid_value, model='item'):
         Model = getUtility(IItem, model)
