@@ -71,6 +71,7 @@ class ItemZODBStorage(object):
             self.root[uid_name][uid_value] = zodb_item
 
         transaction.commit()
+        self.connection.close()
         return local_uid
 
     def get(self, uid=None, data=None):
@@ -87,6 +88,7 @@ class ItemZODBStorage(object):
             item.data = dict(zodb_item.data)
             item.uids = dict(zodb_item.uids)
             # TODO item.schema?
+            self.connection.close()
             return (1, [item])
 
         if data is not None and len(data) > 0:
@@ -104,7 +106,9 @@ class ItemZODBStorage(object):
                 item.uids = dict(i.uids)
                 results.append(item)
 
+            self.connection.close()
             return len(results), results
+        self.connection.close()
         return (0, [])
 
     def delete(self, uid_name, uid_value):
@@ -112,6 +116,7 @@ class ItemZODBStorage(object):
         del self.root[uid_name][uid_value].uids[uid_name]
         # delete the reference (other may exist in other containers)
         del self.root[uid_name][uid_value]
+        self.connection.close()
         transaction.commit()
 
 
