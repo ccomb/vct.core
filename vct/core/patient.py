@@ -8,8 +8,6 @@ class IPatient(Interface):
 genders = {'M': 'Male', 'F': 'Female', '?': 'Unknown'}
 
 class PatientSchema(colander.Schema):
-    id = colander.SchemaNode(colander.String(),
-                             title=u'id')
     firstname = colander.SchemaNode(colander.String(),
                                     title=u'First name')
     lastname = colander.SchemaNode(colander.String(),
@@ -17,11 +15,11 @@ class PatientSchema(colander.Schema):
     birthdate = colander.SchemaNode(colander.Date(),
                                     title=u'Birth date')
     sex = colander.SchemaNode(colander.String(),
-                                    validator=colander.OneOf(genders.keys()),
-                                    widget=deform.widget.SelectWidget(values=genders.items()),
-                                    title=u'Sex')
+                              validator=colander.OneOf(genders.keys()),
+                              widget=deform.widget.SelectWidget(values=genders.items()),
+                              title=u'Sex')
     address = colander.SchemaNode(colander.String(),
-                                   title=u'Address')
+                                  title=u'Address')
     postcode = colander.SchemaNode(colander.String(),
                                    title=u'Post code')
 

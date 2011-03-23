@@ -1,5 +1,6 @@
 from SimpleXMLRPCServer import SimpleXMLRPCRequestHandler
 from SimpleXMLRPCServer import SimpleXMLRPCServer
+import vct.core
 from vct.core.interfaces import IItem
 import multiprocessing, socket, sys, datetime
 import colander, deform
@@ -11,6 +12,15 @@ class XMLRPCRequestHandler(SimpleXMLRPCRequestHandler):
 
 from zope.component import getUtility
 from vct.core.db.interfaces import IDatabase
+import xmlrpclib
+
+def date2string(objs):
+    for obj in objs:
+        for key, value in obj.data.items():
+            if type(value) is datetime.date:
+                obj.data[key] = '%s-%s-%s' % (value.year, value.month, value.day)
+    return objs
+
 
 class Methods(object):
     """expose the database through xmlrpc
@@ -18,17 +28,16 @@ class Methods(object):
     TODO : remove this class, and change IDatabase to reflect this ??
     """
     def get_by_uid(self, uid_name, uid_value, model='item'):
+        if uid_name == 'local':
+            uid_name = vct.core.SERVER_NAME
         Model = getUtility(IItem, model)
-        return IDatabase(Model()).get(uid=(uid_name, uid_value))
+        nb, objs = IDatabase(Model()).get(uid=(uid_name, uid_value))
+        return nb, date2string(objs)
 
     def get_by_data(self, data, model='item'):
         Model = getUtility(IItem, model)
         nb, objs = IDatabase(Model()).get(data=data)
-        for obj in objs:
-            for key, value in obj.data.items():
-                if type(value) is datetime.date:
-                    obj.data[key] = datetime.datetime(value.year, value.month, value.day)
-        return nb, objs
+        return nb, date2string(objs)
 
     def put(self, uid_name, uid_value, data, model='item'):
         Model = getUtility(IItem, model)
@@ -75,7 +84,7 @@ class Methods(object):
             myform = deform.Form(model.schema, buttons=('submit',))
             if data is not None and validate:
                 try:
-                    myform.validate(data)
+                    myform.validate(myform.schema.deserialize(data).items())
                 except deform.ValidationFailure, e:
                     return e.render()
             return myform.render(appstruct=data)
