@@ -83,8 +83,10 @@ class Methods(object):
         if format == 'html':
             myform = deform.Form(model.schema, buttons=('submit',))
             if data is not None and validate:
+
                 try:
-                    myform.validate(myform.schema.deserialize(data).items())
+                    deserialized = myform.validate(data)
+                    data = deserialized
                 except deform.ValidationFailure, e:
                     return e.render()
             return myform.render(appstruct=data)
