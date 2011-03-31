@@ -29,12 +29,16 @@ class Methods(object):
     """
     def get_by_uid(self, uid_name, uid_value, model='item'):
         if uid_name == 'local':
+            # convert the 'local' alias to the real local uid name
             uid_name = vct.core.SERVER_NAME
         Model = getUtility(IItem, model)
         nb, objs = IDatabase(Model()).get(uid=(uid_name, uid_value))
         return nb, date2string(objs)
 
     def get_by_uids(self, uid_name, uid_values, model='item'):
+        if uid_name == 'local':
+            # convert the 'local' alias to the real local uid name
+            uid_name = vct.core.SERVER_NAME
         results = [0, []]
         Model = getUtility(IItem, model)
         db = IDatabase(Model())
@@ -52,6 +56,9 @@ class Methods(object):
         return nb, date2string(objs)
 
     def put(self, uid_name, uid_value, data, model='item'):
+        if uid_name == 'local':
+            # convert the 'local' alias to the real local uid name
+            uid_name = vct.core.SERVER_NAME
         Model = getUtility(IItem, model)
         item = Model()
         if data is not None:
@@ -84,6 +91,9 @@ class Methods(object):
         return results
 
     def delete(self, uid_name, uid_value, model='item'):
+        if uid_name == 'local':
+            # convert the 'local' alias to the real local uid name
+            uid_name = vct.core.SERVER_NAME
         Model = getUtility(IItem, model)
         IDatabase(Model()).delete(uid_name, uid_value)
         return 0

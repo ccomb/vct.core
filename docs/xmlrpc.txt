@@ -73,6 +73,16 @@ We can also do a search by any data key:
    'uids': {'frsecu': 1234,
             'server1': ...}}]]
 
+We can save or change values in the same uid:
+
+>>> local_uid = s.put('frsecu', 1234, {'type':'patient', 'name':'mehmet'})
+>>> pprint(s.get_by_uid('frsecu', 1234), width=1)
+[1,
+ [{'data': {'name': 'mehmet',
+            'type': 'patient'},
+   'uids': {'frsecu': 1234,
+            'server1': ...}}]]
+
 
 We can delete the item:
 

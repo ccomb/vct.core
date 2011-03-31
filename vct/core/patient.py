@@ -7,6 +7,13 @@ class IPatient(Interface):
 
 genders = {'M': 'Male', 'F': 'Female', '?': 'Unknown'}
 
+
+class Items(colander.SequenceSchema):
+    item = colander.SchemaNode(colander.String(),
+widget = deform.widget.HiddenWidget(),
+                               title=u'Item')
+
+
 class PatientSchema(colander.Schema):
     firstname = colander.SchemaNode(colander.String(),
                                     title=u'First name')
@@ -22,6 +29,8 @@ class PatientSchema(colander.Schema):
                                   title=u'Address')
     postcode = colander.SchemaNode(colander.String(),
                                    title=u'Post code')
+
+    items = Items(widget=deform.widget.HiddenWidget())
 
 
 class Patient(Item):
