@@ -26,6 +26,11 @@ class ObservationSchema(colander.Schema):
                                title=u"Link",
                                description=u'(Link to an external annex)')
 
+    patient = colander.SchemaNode(colander.String(),
+                                  title=u'Patient',
+                                  missing=u'',
+                                  )
+
 class Observation(Item):
     """a medical observation
     """

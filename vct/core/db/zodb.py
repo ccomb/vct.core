@@ -34,6 +34,9 @@ class ItemZODBStorage(object):
         self.root = self.connection.root()
         self.context = context
 
+    def __del__(self):
+        self.connection.close()
+
     def put(self, uid_name=None, uid_value=None):
         zodb_item = ZodbItem()
         # if we already have an uid, retrieve the existing object
@@ -71,7 +74,6 @@ class ItemZODBStorage(object):
             self.root[uid_name][uid_value] = zodb_item
 
         transaction.commit()
-        self.connection.close()
         return local_uid
 
     def get(self, uid=None, data=None):
@@ -86,9 +88,9 @@ class ItemZODBStorage(object):
             Model = getUtility(IItem, zodb_item.type)
             item = Model()
             item.data = dict(zodb_item.data)
+            item.data['type'] = zodb_item.type
             item.uids = dict(zodb_item.uids)
             # TODO item.schema?
-            self.connection.close()
             return (1, [item])
 
         if data is not None and len(data) > 0:
@@ -103,12 +105,11 @@ class ItemZODBStorage(object):
                 Model = getUtility(IItem, i.type)
                 item = Model()
                 item.data = dict(i.data)
+                item.data['type'] = i.type
                 item.uids = dict(i.uids)
                 results.append(item)
 
-            self.connection.close()
             return len(results), results
-        self.connection.close()
         return (0, [])
 
     def delete(self, uid_name, uid_value):
@@ -117,6 +118,5 @@ class ItemZODBStorage(object):
         # delete the reference (other may exist in other containers)
         del self.root[uid_name][uid_value]
         transaction.commit()
-        self.connection.close()
 
 
